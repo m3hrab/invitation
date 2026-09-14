@@ -142,10 +142,19 @@ function authPopupPlugin(): Plugin {
   };
 }
 
+const repoName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "";
+const isGithubPages = !!process.env.GITHUB_PAGES && !!repoName;
+const basePath = isGithubPages
+  ? repoName.toLowerCase().endsWith(".github.io")
+    ? "/"
+    : `/${repoName}/`
+  : "/";
+
 // `0.0.0.0:8080` is the live-preview contract — don't change host/port.
 // The dev server starts once `src/router.tsx` and `src/routes/` exist — see
 // AGENTS.md § "First scaffold".
 export default defineConfig(({ command, isPreview }) => ({
+  base: basePath,
   server: {
     host: "0.0.0.0",
     port: 8080,
